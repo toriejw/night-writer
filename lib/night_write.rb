@@ -15,6 +15,3 @@ puts "Created '#{output_file}' containing #{text.chars.count - text_array.count}
 
 
 # `ruby night_write.rb ../test/fixtures/message.txt braille.txt`
-
-# TO DO : KEEP BRAILLE FILES TO 80 CHARS WIDE
-#         SUPPORT CAPITALIZATION
