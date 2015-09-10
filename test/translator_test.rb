@@ -21,15 +21,17 @@ class TranslatorTest < Minitest::Test
       Translator.night_write(["hello world\n", "hello computer\n"])
   end
 
-  def test_returns_blank_braille_character_for_non_lower_case_letters
-    assert_equal "..\n..\n..", Translator.night_write(["!"])
-    assert_equal "0.0.00..\n00.0.0..\n....00..",
-      Translator.night_write(["hey!"])
+  def test_returns_blank_braille_character_for_spaces
+    assert_equal "..\n..\n..", Translator.night_write([" "])
+  end
+
+  def test_handles_non_alphabetic_characters
+    assert_equal "0.0.00..\n00.0.000\n....000.", Translator.night_write(["hey!"])
+    assert_equal "..\n0.\n00", Translator.night_write(["?"])
   end
 
   def test_lines_do_not_go_over_80_text_characters
     skip
-
   end
 
   def test_handles_capital_letters
