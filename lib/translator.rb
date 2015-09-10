@@ -30,19 +30,36 @@ class Translator
                 }
 
   def self.night_write(string_array)
-    braille_lines = string_array.map { |line| line_to_braille(line.downcase) }
+    braille_lines = string_array.map { |line| line_to_braille(line) }
     combine_lines(braille_lines)
+  end
+
+  def self.night_read(braille_array)
+    "output"
   end
 
   def self.line_to_braille(line)
     braille_chars = []
-    line.chars.each { |char| braille_chars << self.char_to_braille(char) }
-    self.join_braille(braille_chars)
+    line.each_char { |char| braille_chars << self.char_to_braille(char) }
+    self.join_braille(braille_chars.flatten)
   end
 
   def self.char_to_braille(char)
+    if BRAILLE_MAP[char]
+      map_to_braille(BRAILLE_MAP[char])
+    elsif BRAILLE_MAP[char.downcase]
+      lower_case = map_to_braille(BRAILLE_MAP[char.downcase])
+      [".....0", lower_case]
+    else
+      map_to_braille([])
+    end
+  end
+
+  def self.map_to_braille(numbers)
     braille = "." * 6
-    BRAILLE_MAP[char].each { |dot| braille[dot - 1] = "0" } if BRAILLE_MAP[char]
+    numbers.each do |dot|
+      braille[dot - 1] = "0"
+    end
     braille
   end
 
@@ -53,7 +70,6 @@ class Translator
       line2 << char[2..3]
       line3 << char[4..5]
     end
-
     line = (line1 + "\n" + line2 + "\n" +line3)
   end
 
@@ -63,3 +79,5 @@ class Translator
     output.chomp
   end
 end
+
+Translator.night_write(["hello world"])

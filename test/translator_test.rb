@@ -27,4 +27,13 @@ class TranslatorTest < Minitest::Test
       Translator.night_write(["hey!"])
   end
 
+  def test_lines_do_not_go_over_80_text_characters
+    skip
+
+  end
+
+  def test_handles_capital_letters
+    assert_equal "..0.\n..00\n.0..", Translator.night_write(["H"])
+  end
+
 end
