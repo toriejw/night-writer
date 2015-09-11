@@ -3,6 +3,7 @@ require_relative 'translator'
 class NightRead
   attr_reader :input_file, :output_file
   attr_accessor :braille
+
   def initialize(input, output)
     @input_file = input
     @output_file = output
@@ -21,12 +22,10 @@ class NightRead
   end
 end
 
-
 running_file = ($PROGRAM_NAME == __FILE__)
 
 if running_file
   input_file = ARGV[0]
   output_file = ARGV[1]
-
   NightRead.new(input_file, output_file).call
 end

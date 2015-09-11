@@ -11,32 +11,35 @@ class Translator
 
   def self.night_read(braille_array)
     braille_lines = separate_lines(braille_array)
+    text = create_text_lines(braille_lines)
+    add_capitals(text)
+    text = split_line(text).join("\n") if too_long?(text)
+    text.chop
+  end
+
+  def self.create_text_lines(braille_lines)
     text = ''
     braille_lines.map do |line|
       line_chars = separate_chars(line.flatten)
       text << translate(line_chars)
     end
-    add_capitals(text)
-    text = split_line(text).join("\n") if too_long?(text)
-    text.chop
+    text
   end
 
   def self.translate(chars)
     line = ''
     chars.each_with_index do |braille_char, index|
       map = map_to_text(braille_char)
-      letter = BRAILLE_MAP.key(map)
-      line << letter
+      line << BRAILLE_MAP.key(map)
     end
     line
   end
 
   def self.add_capitals(text)
     text.each_char.with_index do |char, index|
-      if char == "^"
-        text[index + 1] = text[index + 1].upcase
-        text[index] = ""
-      end
+      next unless char == "^"
+      text[index + 1] = text[index + 1].upcase
+      text[index] = ""
     end
   end
 
@@ -70,13 +73,13 @@ class Translator
   end
 
   def self.split_line(line)
-    lines = line.scan(/.{1,40}/)
+    line.scan(/.{1,40}/)
   end
 
   def self.line_to_braille(line)
     braille_chars = []
-    line.each_char { |char| braille_chars << self.char_to_braille(char) }
-    self.join_braille(braille_chars.flatten)
+    line.each_char { |char| braille_chars << char_to_braille(char) }
+    join_braille(braille_chars.flatten)
   end
 
   def self.char_to_braille(char)
@@ -85,8 +88,6 @@ class Translator
     elsif BRAILLE_MAP[char.downcase]
       lower_case = map_to_braille(BRAILLE_MAP[char.downcase])
       [".....0", lower_case]
-    else
-      map_to_braille([])
     end
   end
 
@@ -114,5 +115,3 @@ class Translator
     output.chomp
   end
 end
-
-Translator.night_read(["0.\n", "00\n", "..\n"])
