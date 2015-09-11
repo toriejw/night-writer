@@ -1,17 +1,38 @@
 require_relative 'translator'
 
-input_file = ARGV[0]
-output_file = ARGV[1]
+class NightWrite
+  attr_accessor :text_lines
+  attr_reader :input_file, :output_file
 
-text_array = File.readlines(input_file)
+  def initialize(input, output)
+    @input_file = input
+    @output_file = output
+  end
 
-text = ''
-text_array.each { |line| text << line }
+  def call
+    import_text
+    content = Translator.night_write(text_lines) # should this be it's own method?
+    export(content)
+  end
 
-braille = Translator.night_write(text_array)
+  def import_text
+    @text_lines = File.readlines(@input_file)
+  end
 
-File.write(output_file, braille)
-puts "Created '#{output_file}' containing #{text.chars.count - text_array.count} characters."
+  def export(content)
+    File.write(output_file, content)
+    file_characters = text_lines.flatten.each { |line| line.strip! }
+                                        .join("")
+                                        .size
+    puts "Created '#{output_file}' containing #{file_characters} characters."
+  end
+end
 
+running_file = ($PROGRAM_NAME == __FILE__)
 
-# `ruby night_write.rb ../test/fixtures/message.txt braille.txt`
+if running_file
+  input_file = ARGV[0]
+  output_file = ARGV[1]
+
+  NightWrite.new(input_file, output_file).call
+end

@@ -39,21 +39,62 @@ class Translator
     string_array.each_with_index do |line, index|
       string_array[index] = split_line(line) if too_long?(line)
     end
-
     braille_lines = string_array.flatten.map { |line| line_to_braille(line.chomp) }
     combine_lines(braille_lines)
   end
 
+  def self.night_read(braille_array)
+    braille_lines = separate_lines(braille_array)
+    text = ''
+    braille_lines.map do |line|
+      line_chars = separate_chars(line.flatten)
+      text << translate(line_chars)
+    end
+    text
+  end
+
+  def self.translate(chars)
+    chars.each do |braille_char|
+      map = map_to_text(braille_char)
+      # return key for value map
+
+
+
+
+    end
+  end
+
+  def self.map_to_text(braille_char)
+    map = []
+    braille_char.chars.each_with_index do |char, index|
+      map << index + 1 if char == "0"
+    end
+    map
+  end
+
+  def self.separate_lines(array)
+    braille_lines = []
+    array.each_with_index do |_, index|
+      next if index % 3 != 0
+      braille_lines << [array[index..index + 2]]
+    end
+    braille_lines
+  end
+
+  def self.separate_chars(line)
+    braille_chars = []
+    while line[0].length > 0
+      braille_chars << line[0].slice!(0..1) + line[1].slice!(0..1) + line[2].slice!(0..1)
+    end
+    braille_chars
+  end
+
   def self.too_long?(line)
-    line.length > 80
+    line.length > 40
   end
 
   def self.split_line(line)
-    lines = line.scan(/.{1,80}/)
-  end
-
-  def self.night_read(braille_array)
-    "output"
+    lines = line.scan(/.{1,40}/)
   end
 
   def self.line_to_braille(line)
@@ -98,5 +139,4 @@ class Translator
   end
 end
 
-
-# Translator.night_write(["helloooooooooooosffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"])
+Translator.night_write([" "*41])
