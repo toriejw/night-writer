@@ -1,18 +1,24 @@
 require_relative 'translator'
-require 'pry'
 
 class NightRead
+  attr_reader :input_file, :output_file
+  attr_accessor :braille
   def initialize(input, output)
     @input_file = input
     @output_file = output
+    @braille
   end
 
   def call
-    import_text
-    content = Translator.night_write(text_lines)
+    @braille = File.readlines(input_file)
+    content = Translator.night_read(braille)
     export(content)
   end
 
+  def export(content)
+    File.write(output_file, content)
+    puts "Created '#{output_file}' containing #{content.chars.count} characters."
+  end
 end
 
 
@@ -24,10 +30,3 @@ if running_file
 
   NightRead.new(input_file, output_file).call
 end
-
-braille = File.readlines(input_file)
-
-output = Translator.night_read(braille)
-
-File.write(output_file, output)
-puts "Created '#{output_file}' containing #{output.chars.count} characters."

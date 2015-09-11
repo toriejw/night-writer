@@ -10,13 +10,9 @@ class NightWrite
   end
 
   def call
-    import_text
+    @text_lines = File.readlines(input_file)
     content = Translator.night_write(text_lines) # should this be it's own method?
     export(content)
-  end
-
-  def import_text
-    @text_lines = File.readlines(@input_file)
   end
 
   def export(content)
